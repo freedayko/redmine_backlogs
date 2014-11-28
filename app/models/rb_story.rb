@@ -404,20 +404,30 @@ class RbStory < Issue
 
         #calculate done_ratio weighted from tasks
         recalculate_attributes_for(self.id) unless Issue.use_status_for_done_ratio?
+      when 'mapping'
+      
       else
 
     end
   end
 
   def set_closed_status_if_following_to_close
-        status_id = Setting.plugin_redmine_backlogs[:story_close_status_id]
-        unless status_id.nil? || status_id.to_i == 0
-          # bail out if something is other than closed.
-          tasks.each{|task|
-            return unless task.status.is_closed?
-          }
-          self.journalized_update_attributes :status_id => status_id.to_i #update, but no need to position
-        end
+    new_status_id = status_id
+
+    closed_status_id = Setting.plugin_redmine_backlogs[:story_close_status_id]
+    unless closed_status_id.nil? || closed_status_id.to_i == 0
+      # bail out if something is other than closed.
+      new_status_id = closed_status_id if tasks.reject{|task| task.status.is_closed? }.empty?
+    end
+
+    in_progress_status_id = Setting.plugin_redmine_backlogs[:story_in_progress_status_id] if new_status_id == status_id
+    unless in_progress_status_id.nil? || in_progress_status_id.to_i == 0
+      # bail out if something is other than closed.
+      new_status_id = in_progress_status_id if tasks.reject{|task| task.status.is_default? }.any?
+    end
+    
+     #update, but no need to position
+     self.journalized_update_attributes :status_id => new_status_id.to_i if new_status_id.to_i != status_id.to_i
   end
 
 private

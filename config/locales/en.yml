@@ -33,7 +33,10 @@ en:
   backlogs_story_follow_task_status_nil: Disabled
   backlogs_story_follow_task_status_close: Close when all Tasks are closed
   backlogs_story_follow_task_status_loose: Loosely follow Tasks average done ratio
+  backlogs_story_follow_task_status_mapping: Follow Tasks Mapping
   backlogs_story_close_status: "When all Tasks are closed, update Story to:"
+  backlogs_story_in_progress_status: "Task changed state, update Story to:"
+  backlogs_story_status_when_new_task: "New Task created, update Story to:"
   backlogs_product_backlog: Product backlog
   backlogs_sprints: Sprints
   backlogs_story: Story

@@ -28,10 +28,11 @@
     }
   }
 
-  function update_storystate(state) {
-    RB.$('#settings_story_close_status_id').parent().hide();
+  function update_storystate() {
+    state = RB.$('[name="settings[story_follow_task_status]"]:checked').val();
+    RB.$('#settings_story_follow_task_status_close_conf').hide();
     RB.$("#settings_story_follow_task_status_explanation").hide();
-    if (state=='close') RB.$('#settings_story_close_status_id').parent().show();
+    if (state=='close') RB.$('#settings_story_follow_task_status_close_conf').show();
     if (state=='loose') RB.$("#settings_story_follow_task_status_explanation").show();
   }
 
@@ -39,9 +40,7 @@
     RB.$("#settings_task_tracker").change(function() { enable_apply(); });
     RB.$("#settings_story_trackers").change(function() { enable_apply(); });
 
-    RB.$("#settings_story_follow_task_status_loose").change(function(){update_storystate('loose');});
-    RB.$("#settings_story_follow_task_status_close").change(function(){update_storystate('close');});
-    RB.$("#settings_story_follow_task_status_nil").change(function(){update_storystate();});
+    RB.$('[name="settings[story_follow_task_status]"]').change(function(){update_storystate();});
     enable_apply();
     update_storystate();
   });
@@ -160,14 +159,26 @@
   <br />
   <%= radio_button_tag("settings[story_follow_task_status]", 'loose',
       Backlogs.setting[:story_follow_task_status] == 'loose' ) %><%= l(:backlogs_story_follow_task_status_loose) %>
+      <br />
   <span id="settings_story_follow_task_status_explanation" style="display:block;margin-left:12px"><%= l(:backlogs_story_follows_task_loose_explanation) %></span>
-  <br />
-  <span>
-  <%= content_tag(:label, l(:backlogs_story_close_status)) %>
-  <%= select_tag("settings[story_close_status_id]", 
-            options_for_select([['<'+l(:rb_label_timelog_disable)+'>', 0]] + IssueStatus.all.collect{|e| [e.name, e.id]},
-                              Setting.plugin_redmine_backlogs.has_key?(:story_close_status_id)?(Setting.plugin_redmine_backlogs[:story_close_status_id].to_i):0)
-  ) %>
+  <span id="settings_story_follow_task_status_close_conf">
+      <%= content_tag(:label, l(:backlogs_story_close_status)) %>
+      <%= select_tag("settings[story_close_status_id]", 
+                options_for_select([['<'+l(:rb_label_timelog_disable)+'>', 0]] + IssueStatus.all.collect{|e| [e.name, e.id]},
+                                  Setting.plugin_redmine_backlogs.has_key?(:story_close_status_id)?(Setting.plugin_redmine_backlogs[:story_close_status_id].to_i):0)
+      ) %>
+      <br />
+      <%= content_tag(:label, l(:backlogs_story_in_progress_status)) %>
+      <%= select_tag("settings[story_in_progress_status_id]", 
+          options_for_select([['<'+l(:rb_label_timelog_disable)+'>', 0]] + IssueStatus.all.collect{|e| [e.name, e.id]},
+              Setting.plugin_redmine_backlogs.has_key?(:story_in_progress_status_id)?(Setting.plugin_redmine_backlogs[:story_in_progress_status_id].to_i):0)
+      ) %>
+      <br />
+      <%= content_tag(:label, l(:backlogs_story_status_when_new_task)) %>
+      <%= select_tag("settings[story_task_when_new_status_id]", 
+          options_for_select([['<'+l(:rb_label_timelog_disable)+'>', 0]] + IssueStatus.all.collect{|e| [e.name, e.id]},
+              Setting.plugin_redmine_backlogs.has_key?(:story_task_when_new_status_id)?(Setting.plugin_redmine_backlogs[:story_task_when_new_status_id].to_i):0)
+      ) %>
   </span>
 </p>
 
