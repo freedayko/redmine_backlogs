@@ -34,7 +34,7 @@ group :test do
     gem "culerity"
   else
     unless chiliproject
-      gem "capybara", "~>1.1.0"
+      gem "capybara", "~>2.1.0"
       gem "poltergeist", "~>0.6.0"
     end
     gem "cucumber", "=1.1.0"
