@@ -17,13 +17,14 @@ class RbTasksController < RbApplicationController
     status = (result == 0 ? 200 : 400)
     @include_meta = true
     
-    new_status_id = Setting.plugin_redmine_backlogs[:story_task_when_new_status_id]
-    exclude_status_ids = [ IssueStatus.find_by_is_default(true).id.to_i ]
-    in_progress_status_id = Setting.plugin_redmine_backlogs[:story_in_progress_status_id]
-    exclude_status_ids.push(in_progress_status_id) unless in_progress_status_id.nil? || in_progress_status_id == 0
-    unless new_status_id.nil? || new_status_id.to_i == 0 || !exclude_status_ids.include?(@task.status_id.to_i)
-      @task.story.status_id = new_status_id
-    end
+#    new_status_id = Setting.plugin_redmine_backlogs[:story_task_when_new_status_id]
+#    exclude_status_ids = [ IssueStatus.find_by_is_default(true).id.to_i ]
+#    in_progress_status_id = Setting.plugin_redmine_backlogs[:story_in_progress_status_id]
+#    exclude_status_ids.push(in_progress_status_id) unless in_progress_status_id.nil? || in_progress_status_id == 0
+#    unless new_status_id.nil? || new_status_id.to_i == 0 || !exclude_status_ids.include?(@task.status_id.to_i)
+#      @task.story.reload
+#      @task.story.journalized_update_attributes :status_id => new_status_id.to_i
+#    end
 
     respond_to do |format|
       format.html { render :partial => "task", :object => @task, :status => status }

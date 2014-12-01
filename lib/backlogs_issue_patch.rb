@@ -22,6 +22,7 @@ module Backlogs
 
         before_save :backlogs_before_save
         after_save  :backlogs_after_save
+        after_create  :backlogs_after_create
 
         include Backlogs::ActiveRecord::Attributes
       end
@@ -145,7 +146,7 @@ module Backlogs
           end
         }
 
-        return unless Backlogs.configured?(self.project)
+        return true unless Backlogs.configured?(self.project)
 
         if self.is_story?
           # raw sql and manual journal here because not
@@ -172,6 +173,22 @@ module Backlogs
                                 where id in #{task_ids}")
           end
         end
+        return true
+      end
+
+      def backlogs_after_create
+        return true unless Backlogs.configured?(self.project)
+        if self.story
+          new_status_id = Setting.plugin_redmine_backlogs[:story_task_when_new_status_id]
+          unless new_status_id.nil? || new_status_id.to_i == 0
+            exclude_status_ids = [ IssueStatus.find_by_is_default(true).id.to_i ]
+            in_progress_status_id = Setting.plugin_redmine_backlogs[:story_in_progress_status_id]
+            exclude_status_ids.push(in_progress_status_id) unless in_progress_status_id.nil? || in_progress_status_id == 0
+            self.story.reload
+            self.story.journalized_update_attributes :status_id => new_status_id.to_i unless exclude_status_ids.include?(self.story.status_id.to_i)
+          end
+        end
+        return true
       end
 
       def assignable_releases
